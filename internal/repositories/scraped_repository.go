@@ -13,7 +13,6 @@ type ScrapedData struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// Сохранение спарсенных данных
 func SaveScrapedData(source, url, rawText string) error {
 	_, err := DB.Exec(context.Background(),
 		`INSERT INTO scraped_data (source, url, raw_text) VALUES ($1, $2, $3)`,
@@ -21,7 +20,6 @@ func SaveScrapedData(source, url, rawText string) error {
 	return err
 }
 
-// Получение спарсенных данных
 func GetScrapedData() ([]ScrapedData, error) {
 	rows, err := DB.Query(context.Background(),
 		`SELECT id, source, url, raw_text, created_at FROM scraped_data ORDER BY created_at DESC`)
