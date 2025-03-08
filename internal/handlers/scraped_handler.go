@@ -7,7 +7,6 @@ import (
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/repositories"
 )
 
-// Сохранение спарсенных данных
 func SaveScrapedDataHandler(w http.ResponseWriter, r *http.Request) {
 	var data repositories.ScrapedData
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
@@ -24,7 +23,6 @@ func SaveScrapedDataHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-// Получение спарсенных данных
 func GetScrapedDataHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := repositories.GetScrapedData()
 	if err != nil {

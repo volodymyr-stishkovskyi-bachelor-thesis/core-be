@@ -42,6 +42,7 @@ func main() {
 	router.HandleFunc("/queries", handlers.GetUserQueriesHandler).Methods("GET")
 	router.HandleFunc("/scraped", handlers.SaveScrapedDataHandler).Methods("POST")
 	router.HandleFunc("/scraped", handlers.GetScrapedDataHandler).Methods("GET")
+	router.HandleFunc("/scrape", handlers.ScrapeHandler).Methods("POST")
 
 	logger.Info("Starting server on port " + port)
 	log.Fatal(http.ListenAndServe(":"+port, router))

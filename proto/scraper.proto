@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package scraper;
+
+option go_package = "github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/proto;proto";
+
+service ScraperService {
+  rpc Scrape (ScrapeRequest) returns (ScrapeResponse);
+}
+
+message ScrapeRequest {
+  string url = 1;
+}
+
+message ScrapeResponse {
+  string title = 1;
+  string content = 2;
+}
