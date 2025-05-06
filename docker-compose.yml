@@ -13,4 +13,5 @@ services:
       DB_NAME: ${DB_NAME}
       DB_PORT: ${DB_PORT}
       SCRAPER_URL: ${SCRAPER_URL}
+      FE_URL: ${FE_URL}
       PORT: ${PORT}
