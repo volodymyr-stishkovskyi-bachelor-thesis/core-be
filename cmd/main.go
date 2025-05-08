@@ -11,6 +11,7 @@ import (
 
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/handlers"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/repositories"
+	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/vector"
 )
 
 var logger = logrus.New()
@@ -30,6 +31,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}
+
+	vector.Init()
 
 	router := mux.NewRouter()
 
