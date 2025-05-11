@@ -119,3 +119,105 @@ var ScraperService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/scraper.proto",
 }
+
+const (
+	LeetCodeService_GetStats_FullMethodName = "/scraper.LeetCodeService/GetStats"
+)
+
+// LeetCodeServiceClient is the client API for LeetCodeService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type LeetCodeServiceClient interface {
+	GetStats(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*LeetCodeStatsResponse, error)
+}
+
+type leetCodeServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewLeetCodeServiceClient(cc grpc.ClientConnInterface) LeetCodeServiceClient {
+	return &leetCodeServiceClient{cc}
+}
+
+func (c *leetCodeServiceClient) GetStats(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*LeetCodeStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LeetCodeStatsResponse)
+	err := c.cc.Invoke(ctx, LeetCodeService_GetStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// LeetCodeServiceServer is the server API for LeetCodeService service.
+// All implementations must embed UnimplementedLeetCodeServiceServer
+// for forward compatibility.
+type LeetCodeServiceServer interface {
+	GetStats(context.Context, *Empty) (*LeetCodeStatsResponse, error)
+	mustEmbedUnimplementedLeetCodeServiceServer()
+}
+
+// UnimplementedLeetCodeServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedLeetCodeServiceServer struct{}
+
+func (UnimplementedLeetCodeServiceServer) GetStats(context.Context, *Empty) (*LeetCodeStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStats not implemented")
+}
+func (UnimplementedLeetCodeServiceServer) mustEmbedUnimplementedLeetCodeServiceServer() {}
+func (UnimplementedLeetCodeServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeLeetCodeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LeetCodeServiceServer will
+// result in compilation errors.
+type UnsafeLeetCodeServiceServer interface {
+	mustEmbedUnimplementedLeetCodeServiceServer()
+}
+
+func RegisterLeetCodeServiceServer(s grpc.ServiceRegistrar, srv LeetCodeServiceServer) {
+	// If the following call pancis, it indicates UnimplementedLeetCodeServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&LeetCodeService_ServiceDesc, srv)
+}
+
+func _LeetCodeService_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LeetCodeServiceServer).GetStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LeetCodeService_GetStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LeetCodeServiceServer).GetStats(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// LeetCodeService_ServiceDesc is the grpc.ServiceDesc for LeetCodeService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var LeetCodeService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "scraper.LeetCodeService",
+	HandlerType: (*LeetCodeServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetStats",
+			Handler:    _LeetCodeService_GetStats_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/scraper.proto",
+}

@@ -16,3 +16,20 @@ message ScrapeResponse {
   string title = 1;
   string content = 2;
 }
+
+service LeetCodeService {
+  rpc GetStats (Empty) returns (LeetCodeStatsResponse);
+}
+
+message Empty {}
+
+message LeetCodeStatsResponse {
+  int32 reputation = 1;
+  int32 ranking = 2;
+  repeated SubmissionNum ac_submission_num = 3;
+}
+
+message SubmissionNum {
+  string difficulty = 1;
+  int32 count = 2;
+}

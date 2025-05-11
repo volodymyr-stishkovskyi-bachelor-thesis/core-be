@@ -33,7 +33,7 @@ func Scrape(url string, client pb.ScraperServiceClient) (*pb.ScrapeResponse, err
 	}
 	resp, err := client.Scrape(ctx, req)
 	if err != nil {
-		log.Fatalf("Ошибка при вызове Scrape: %v", err)
+		log.Fatalf("Error using Scrape: %v", err)
 		return nil, err
 	}
 	log.Printf("Title: %s", resp.GetTitle())
