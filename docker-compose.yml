@@ -58,3 +58,8 @@ volumes:
     driver: local
   redis-data:
     driver: local
+
+networks:
+  default:
+    external:
+      name: app-network
