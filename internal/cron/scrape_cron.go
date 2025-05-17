@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 	"reflect"
 
 	"github.com/go-redis/redis/v8"
@@ -14,7 +15,7 @@ import (
 func StartScrapeCron(rdb *redis.Client) {
 	c := cron.New()
 	// Cron every day at midnight
-	c.AddFunc("0 0 * * *", func() {
+	c.AddFunc(os.Getenv("CRON_SCHEDULE"), func() {
 		log.Println("Cron scraping")
 		ctx := context.Background()
 		resp, err := service.ConnectAndScrapeHandler()
