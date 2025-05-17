@@ -66,3 +66,59 @@ func RunQuery(ctx context.Context, dto QueryDTO) ([]*pinecone.ScoredVector, erro
 	log.Printf("Query returned %d matches for %q", len(matches), dto.Query)
 	return matches, nil
 }
+
+func IndexScrapeResponse(ctx context.Context, idPrefix string, resp ScrapeResponse) error {
+	var vecs []*pinecone.Vector
+
+	for i, c := range resp.Credly {
+		text := fmt.Sprintf("Title: %s; Issuer: %s; IssuedDate: %s", c.Title, c.Issuer, c.IssuedDate)
+		emb, err := openai.GenerateEmbedding(ctx, text)
+		if err != nil {
+			return err
+		}
+		metadataMapCredly := map[string]interface{}{
+			"type":       "credly",
+			"title":      c.Title,
+			"issuer":     c.Issuer,
+			"issuedDate": c.IssuedDate,
+		}
+		metadataCredly, err := structpb.NewStruct(metadataMapCredly)
+		vecs = append(vecs, &pinecone.Vector{
+			Id:       fmt.Sprintf("%s:credly:%d", idPrefix, i),
+			Values:   &emb,
+			Metadata: metadataCredly,
+		})
+	}
+
+	ll := resp.LeetCode
+	statsText := fmt.Sprintf(
+		"Reputation: %d; Ranking: %d; Easy submissions: %d; Medium: %d; Hard: %d",
+		ll.Reputation, ll.Ranking,
+		ll.AcSubmissionNum[0].Count,
+		ll.AcSubmissionNum[1].Count,
+		ll.AcSubmissionNum[2].Count,
+	)
+	emb, err := openai.GenerateEmbedding(ctx, statsText)
+	if err != nil {
+		return err
+	}
+
+	metadataMapLeetCode := map[string]interface{}{
+		"type":       "leetcode",
+		"reputation": fmt.Sprint(ll.Reputation),
+		"ranking":    fmt.Sprint(ll.Ranking),
+	}
+	metadataLeetCode, err := structpb.NewStruct(metadataMapLeetCode)
+
+	vecs = append(vecs, &pinecone.Vector{
+		Id:       fmt.Sprintf("%s:leetcode", idPrefix),
+		Values:   &emb,
+		Metadata: metadataLeetCode,
+	})
+
+	if err := vector.UpsertVectors(vecs); err != nil {
+		return fmt.Errorf("pinecone upsert failed: %w", err)
+	}
+	log.Printf("Indexed %d vectors for %s", len(vecs), idPrefix)
+	return nil
+}

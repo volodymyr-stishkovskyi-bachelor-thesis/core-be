@@ -9,6 +9,7 @@ import (
 
 	pb "github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func ConnectToScraperService() (pb.ScraperServiceClient, *grpc.ClientConn, error) {
@@ -24,19 +25,18 @@ func ConnectToScraperService() (pb.ScraperServiceClient, *grpc.ClientConn, error
 	return pb.NewScraperServiceClient(conn), conn, nil
 }
 
-func Scrape(url string, client pb.ScraperServiceClient) (*pb.ScrapeResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+func Scrape(client pb.ScraperServiceClient) (*pb.ScrapeResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	req := &pb.ScrapeRequest{
-		Url: url,
-	}
+	req := &emptypb.Empty{}
 	resp, err := client.Scrape(ctx, req)
 	if err != nil {
 		log.Fatalf("Error using Scrape: %v", err)
 		return nil, err
 	}
-	log.Printf("Title: %s", resp.GetTitle())
+	log.Printf("Title: %s", resp.GetCredly()[0])
+	log.Printf("Title: %s", resp.GetLeetcode())
 
 	return resp, nil
 }

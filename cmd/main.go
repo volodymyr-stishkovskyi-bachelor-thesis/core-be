@@ -9,12 +9,31 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 
+	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/cron"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/handlers"
+	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/redisclient"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/repositories"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/vector"
 )
 
 var logger = logrus.New()
+
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		feUrl := os.Getenv("FE_URL")
+
+		w.Header().Set("Access-Control-Allow-Origin", feUrl)
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
 
 func main() {
 	err := godotenv.Load()
@@ -32,6 +51,9 @@ func main() {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}
 
+	rdb := redisclient.NewClient()
+
+	cron.StartScrapeCron(rdb)
 	vector.Init()
 
 	router := mux.NewRouter()
@@ -41,14 +63,13 @@ func main() {
 		w.Write([]byte(`{"status":"ok"}`))
 	}).Methods("GET")
 
-	router.HandleFunc("/queries", handlers.SaveQueryHandler).Methods("POST")
+	router.HandleFunc("/queries", handlers.QueryHandler).Methods("POST")
 	router.HandleFunc("/queries", handlers.GetUserQueriesHandler).Methods("GET")
-	router.HandleFunc("/scraped", handlers.SaveScrapedDataHandler).Methods("POST")
-	router.HandleFunc("/scraped", handlers.GetScrapedDataHandler).Methods("GET")
-	router.HandleFunc("/scrape", handlers.ScrapeHandler).Methods("POST")
 	router.HandleFunc("/resume", handlers.ResumeHandler).Methods("GET")
-	router.HandleFunc("/leetcode/stats", handlers.LeetCodeStatsHandler).Methods("GET")
+	router.HandleFunc("/leetcode", handlers.LeetCodeHandler).Methods("GET")
+
+	routerWithCORS := withCORS(router)
 
 	logger.Info("Starting server on port " + port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":"+port, routerWithCORS))
 }
