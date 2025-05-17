@@ -1,8 +1,8 @@
 module github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be
 
-go 1.22.0
+go 1.24.1
 
-toolchain go1.23.3
+toolchain go1.24.3
 
 require (
 	github.com/gorilla/mux v1.8.1
@@ -13,12 +13,17 @@ require (
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728 // indirect
 	github.com/oapi-codegen/runtime v1.1.1 // indirect
 	github.com/openai/openai-go v0.1.0-beta.10 // indirect
 	github.com/pinecone-io/go-pinecone/v3 v3.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

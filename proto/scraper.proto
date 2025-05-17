@@ -4,29 +4,27 @@ package scraper;
 
 option go_package = "github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/proto;proto";
 
-service ScraperService {
-  rpc Scrape (ScrapeRequest) returns (ScrapeResponse);
-}
+import "google/protobuf/empty.proto";
 
-message ScrapeRequest {
-  string url = 1;
+service ScraperService {
+  rpc Scrape (google.protobuf.Empty) returns (ScrapeResponse);
 }
 
 message ScrapeResponse {
+  repeated CredlyResponse credly = 1;
+  LeetCodeStats leetcode = 2;
+}
+
+message CredlyResponse {
   string title = 1;
-  string content = 2;
+  string issuer = 2;
+  string issuedDate = 3;
 }
 
-service LeetCodeService {
-  rpc GetStats (Empty) returns (LeetCodeStatsResponse);
-}
-
-message Empty {}
-
-message LeetCodeStatsResponse {
+message LeetCodeStats {
   int32 reputation = 1;
   int32 ranking = 2;
-  repeated SubmissionNum ac_submission_num = 3;
+  repeated SubmissionNum acSubmissionNum = 3;
 }
 
 message SubmissionNum {

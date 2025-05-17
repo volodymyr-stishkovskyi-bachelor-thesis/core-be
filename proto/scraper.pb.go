@@ -9,6 +9,7 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,61 +22,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ScrapeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ScrapeRequest) Reset() {
-	*x = ScrapeRequest{}
-	mi := &file_proto_scraper_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ScrapeRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ScrapeRequest) ProtoMessage() {}
-
-func (x *ScrapeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_scraper_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ScrapeRequest.ProtoReflect.Descriptor instead.
-func (*ScrapeRequest) Descriptor() ([]byte, []int) {
-	return file_proto_scraper_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ScrapeRequest) GetUrl() string {
-	if x != nil {
-		return x.Url
-	}
-	return ""
-}
-
 type ScrapeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Content       string                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+	Credly        []*CredlyResponse      `protobuf:"bytes,1,rep,name=credly,proto3" json:"credly,omitempty"`
+	Leetcode      *LeetCodeStats         `protobuf:"bytes,2,opt,name=leetcode,proto3" json:"leetcode,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ScrapeResponse) Reset() {
 	*x = ScrapeResponse{}
-	mi := &file_proto_scraper_proto_msgTypes[1]
+	mi := &file_proto_scraper_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -87,7 +44,7 @@ func (x *ScrapeResponse) String() string {
 func (*ScrapeResponse) ProtoMessage() {}
 
 func (x *ScrapeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_scraper_proto_msgTypes[1]
+	mi := &file_proto_scraper_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -100,83 +57,107 @@ func (x *ScrapeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScrapeResponse.ProtoReflect.Descriptor instead.
 func (*ScrapeResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ScrapeResponse) GetCredly() []*CredlyResponse {
+	if x != nil {
+		return x.Credly
+	}
+	return nil
+}
+
+func (x *ScrapeResponse) GetLeetcode() *LeetCodeStats {
+	if x != nil {
+		return x.Leetcode
+	}
+	return nil
+}
+
+type CredlyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Issuer        string                 `protobuf:"bytes,2,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	IssuedDate    string                 `protobuf:"bytes,3,opt,name=issuedDate,proto3" json:"issuedDate,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CredlyResponse) Reset() {
+	*x = CredlyResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CredlyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CredlyResponse) ProtoMessage() {}
+
+func (x *CredlyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CredlyResponse.ProtoReflect.Descriptor instead.
+func (*CredlyResponse) Descriptor() ([]byte, []int) {
 	return file_proto_scraper_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ScrapeResponse) GetTitle() string {
+func (x *CredlyResponse) GetTitle() string {
 	if x != nil {
 		return x.Title
 	}
 	return ""
 }
 
-func (x *ScrapeResponse) GetContent() string {
+func (x *CredlyResponse) GetIssuer() string {
 	if x != nil {
-		return x.Content
+		return x.Issuer
 	}
 	return ""
 }
 
-type Empty struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Empty) Reset() {
-	*x = Empty{}
-	mi := &file_proto_scraper_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Empty) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Empty) ProtoMessage() {}
-
-func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_scraper_proto_msgTypes[2]
+func (x *CredlyResponse) GetIssuedDate() string {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+		return x.IssuedDate
 	}
-	return mi.MessageOf(x)
+	return ""
 }
 
-// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
-func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_scraper_proto_rawDescGZIP(), []int{2}
-}
-
-type LeetCodeStatsResponse struct {
+type LeetCodeStats struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Reputation      int32                  `protobuf:"varint,1,opt,name=reputation,proto3" json:"reputation,omitempty"`
 	Ranking         int32                  `protobuf:"varint,2,opt,name=ranking,proto3" json:"ranking,omitempty"`
-	AcSubmissionNum []*SubmissionNum       `protobuf:"bytes,3,rep,name=ac_submission_num,json=acSubmissionNum,proto3" json:"ac_submission_num,omitempty"`
+	AcSubmissionNum []*SubmissionNum       `protobuf:"bytes,3,rep,name=acSubmissionNum,proto3" json:"acSubmissionNum,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *LeetCodeStatsResponse) Reset() {
-	*x = LeetCodeStatsResponse{}
-	mi := &file_proto_scraper_proto_msgTypes[3]
+func (x *LeetCodeStats) Reset() {
+	*x = LeetCodeStats{}
+	mi := &file_proto_scraper_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LeetCodeStatsResponse) String() string {
+func (x *LeetCodeStats) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LeetCodeStatsResponse) ProtoMessage() {}
+func (*LeetCodeStats) ProtoMessage() {}
 
-func (x *LeetCodeStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_scraper_proto_msgTypes[3]
+func (x *LeetCodeStats) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -187,26 +168,26 @@ func (x *LeetCodeStatsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LeetCodeStatsResponse.ProtoReflect.Descriptor instead.
-func (*LeetCodeStatsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_scraper_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use LeetCodeStats.ProtoReflect.Descriptor instead.
+func (*LeetCodeStats) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *LeetCodeStatsResponse) GetReputation() int32 {
+func (x *LeetCodeStats) GetReputation() int32 {
 	if x != nil {
 		return x.Reputation
 	}
 	return 0
 }
 
-func (x *LeetCodeStatsResponse) GetRanking() int32 {
+func (x *LeetCodeStats) GetRanking() int32 {
 	if x != nil {
 		return x.Ranking
 	}
 	return 0
 }
 
-func (x *LeetCodeStatsResponse) GetAcSubmissionNum() []*SubmissionNum {
+func (x *LeetCodeStats) GetAcSubmissionNum() []*SubmissionNum {
 	if x != nil {
 		return x.AcSubmissionNum
 	}
@@ -223,7 +204,7 @@ type SubmissionNum struct {
 
 func (x *SubmissionNum) Reset() {
 	*x = SubmissionNum{}
-	mi := &file_proto_scraper_proto_msgTypes[4]
+	mi := &file_proto_scraper_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -235,7 +216,7 @@ func (x *SubmissionNum) String() string {
 func (*SubmissionNum) ProtoMessage() {}
 
 func (x *SubmissionNum) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_scraper_proto_msgTypes[4]
+	mi := &file_proto_scraper_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -248,7 +229,7 @@ func (x *SubmissionNum) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmissionNum.ProtoReflect.Descriptor instead.
 func (*SubmissionNum) Descriptor() ([]byte, []int) {
-	return file_proto_scraper_proto_rawDescGZIP(), []int{4}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SubmissionNum) GetDifficulty() string {
@@ -269,28 +250,29 @@ var File_proto_scraper_proto protoreflect.FileDescriptor
 
 const file_proto_scraper_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/scraper.proto\x12\ascraper\"!\n" +
-	"\rScrapeRequest\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\"@\n" +
-	"\x0eScrapeResponse\x12\x14\n" +
-	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\x02 \x01(\tR\acontent\"\a\n" +
-	"\x05Empty\"\x95\x01\n" +
-	"\x15LeetCodeStatsResponse\x12\x1e\n" +
+	"\x13proto/scraper.proto\x12\ascraper\x1a\x1bgoogle/protobuf/empty.proto\"u\n" +
+	"\x0eScrapeResponse\x12/\n" +
+	"\x06credly\x18\x01 \x03(\v2\x17.scraper.CredlyResponseR\x06credly\x122\n" +
+	"\bleetcode\x18\x02 \x01(\v2\x16.scraper.LeetCodeStatsR\bleetcode\"^\n" +
+	"\x0eCredlyResponse\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x16\n" +
+	"\x06issuer\x18\x02 \x01(\tR\x06issuer\x12\x1e\n" +
+	"\n" +
+	"issuedDate\x18\x03 \x01(\tR\n" +
+	"issuedDate\"\x8b\x01\n" +
+	"\rLeetCodeStats\x12\x1e\n" +
 	"\n" +
 	"reputation\x18\x01 \x01(\x05R\n" +
 	"reputation\x12\x18\n" +
-	"\aranking\x18\x02 \x01(\x05R\aranking\x12B\n" +
-	"\x11ac_submission_num\x18\x03 \x03(\v2\x16.scraper.SubmissionNumR\x0facSubmissionNum\"E\n" +
+	"\aranking\x18\x02 \x01(\x05R\aranking\x12@\n" +
+	"\x0facSubmissionNum\x18\x03 \x03(\v2\x16.scraper.SubmissionNumR\x0facSubmissionNum\"E\n" +
 	"\rSubmissionNum\x12\x1e\n" +
 	"\n" +
 	"difficulty\x18\x01 \x01(\tR\n" +
 	"difficulty\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count2K\n" +
 	"\x0eScraperService\x129\n" +
-	"\x06Scrape\x12\x16.scraper.ScrapeRequest\x1a\x17.scraper.ScrapeResponse2M\n" +
-	"\x0fLeetCodeService\x12:\n" +
-	"\bGetStats\x12\x0e.scraper.Empty\x1a\x1e.scraper.LeetCodeStatsResponseBGZEgithub.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/proto;protob\x06proto3"
+	"\x06Scrape\x12\x16.google.protobuf.Empty\x1a\x17.scraper.ScrapeResponseBGZEgithub.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/proto;protob\x06proto3"
 
 var (
 	file_proto_scraper_proto_rawDescOnce sync.Once
@@ -304,25 +286,25 @@ func file_proto_scraper_proto_rawDescGZIP() []byte {
 	return file_proto_scraper_proto_rawDescData
 }
 
-var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_scraper_proto_goTypes = []any{
-	(*ScrapeRequest)(nil),         // 0: scraper.ScrapeRequest
-	(*ScrapeResponse)(nil),        // 1: scraper.ScrapeResponse
-	(*Empty)(nil),                 // 2: scraper.Empty
-	(*LeetCodeStatsResponse)(nil), // 3: scraper.LeetCodeStatsResponse
-	(*SubmissionNum)(nil),         // 4: scraper.SubmissionNum
+	(*ScrapeResponse)(nil), // 0: scraper.ScrapeResponse
+	(*CredlyResponse)(nil), // 1: scraper.CredlyResponse
+	(*LeetCodeStats)(nil),  // 2: scraper.LeetCodeStats
+	(*SubmissionNum)(nil),  // 3: scraper.SubmissionNum
+	(*emptypb.Empty)(nil),  // 4: google.protobuf.Empty
 }
 var file_proto_scraper_proto_depIdxs = []int32{
-	4, // 0: scraper.LeetCodeStatsResponse.ac_submission_num:type_name -> scraper.SubmissionNum
-	0, // 1: scraper.ScraperService.Scrape:input_type -> scraper.ScrapeRequest
-	2, // 2: scraper.LeetCodeService.GetStats:input_type -> scraper.Empty
-	1, // 3: scraper.ScraperService.Scrape:output_type -> scraper.ScrapeResponse
-	3, // 4: scraper.LeetCodeService.GetStats:output_type -> scraper.LeetCodeStatsResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 0: scraper.ScrapeResponse.credly:type_name -> scraper.CredlyResponse
+	2, // 1: scraper.ScrapeResponse.leetcode:type_name -> scraper.LeetCodeStats
+	3, // 2: scraper.LeetCodeStats.acSubmissionNum:type_name -> scraper.SubmissionNum
+	4, // 3: scraper.ScraperService.Scrape:input_type -> google.protobuf.Empty
+	0, // 4: scraper.ScraperService.Scrape:output_type -> scraper.ScrapeResponse
+	4, // [4:5] is the sub-list for method output_type
+	3, // [3:4] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_scraper_proto_init() }
@@ -336,9 +318,9 @@ func file_proto_scraper_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_scraper_proto_rawDesc), len(file_proto_scraper_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   1,
 		},
 		GoTypes:           file_proto_scraper_proto_goTypes,
 		DependencyIndexes: file_proto_scraper_proto_depIdxs,

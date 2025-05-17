@@ -5,22 +5,34 @@ import (
 	"net/http"
 
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/repositories"
+	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/service"
 )
 
-func SaveQueryHandler(w http.ResponseWriter, r *http.Request) {
-	var query repositories.Query
-	if err := json.NewDecoder(r.Body).Decode(&query); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+type QueryRequest struct {
+	Chat  string `json:"chat"`
+	Query string `json:"query"`
+}
+
+type QueryResponse struct {
+	Response string `json:"response"`
+}
+
+func QueryHandler(w http.ResponseWriter, r *http.Request) {
+
+	var req QueryRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	err := repositories.SaveQuery(query.Query, query.Response)
+	answer, err := service.HandleQuery(r.Context(), req.Chat, req.Query)
 	if err != nil {
-		http.Error(w, "Failed to save query", http.StatusInternalServerError)
+		http.Error(w, "Failed to process query: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(QueryResponse{Response: answer})
 }
 
 func GetUserQueriesHandler(w http.ResponseWriter, r *http.Request) {

@@ -19,3 +19,7 @@ services:
 
 volumes:
   pg_data:
+
+networks:
+  app-net:
+    external: true
