@@ -4,32 +4,52 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"os"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/openai"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/redisclient"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/repositories"
 	"github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/vector"
 )
 
-// HandleQuery делает RAG + ChatGPT + сохраняет историю
+var logger = logrus.New()
+
+func init() {
+	// Configure logger to write to both stdout and file
+	file, err := os.OpenFile("timings.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Failed to open log file: %v", err)
+	}
+
+	logger.SetOutput(io.MultiWriter(os.Stdout, file))
+	logger.SetLevel(logrus.InfoLevel)
+	logger.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+}
+
 func HandleQuery(ctx context.Context, chatID, query string) (string, error) {
-	// 1) Эмбеддинг запроса
+	start := time.Now()
 	emb, err := openai.GenerateEmbedding(ctx, query)
 	if err != nil {
 		return "", fmt.Errorf("embedding failed: %w", err)
 	}
+	logger.Infof("embed_ms=%d", time.Since(start).Milliseconds())
 
-	// 2) Поиск в Pinecone (top-5)
+	pineStart := time.Now()
 	matches, err := vector.QueryVectors(emb, 10)
 	if err != nil {
 		return "", fmt.Errorf("pinecone query failed: %w", err)
 	}
+	logger.Infof("pine_ms=%d", time.Since(pineStart).Milliseconds())
 
 	rdb := redisclient.NewClient()
-	// 3) Достаём последний скрейп из Redis
 	raw, err := rdb.Get(ctx, "scrape:result").Result()
 	if err != nil {
 		return "", fmt.Errorf("redis get failed: %w", err)
@@ -39,7 +59,6 @@ func HandleQuery(ctx context.Context, chatID, query string) (string, error) {
 		return "", fmt.Errorf("invalid scraped JSON: %w", err)
 	}
 
-	// 4) Собираем документы из совпадений по ID
 	var docs []string
 	for _, m := range matches {
 		vec := m.Vector              // *pinecone.Vector
@@ -78,7 +97,6 @@ func HandleQuery(ctx context.Context, chatID, query string) (string, error) {
 					ll.Reputation, ll.Ranking, easy, medium, hard))
 
 		case "resume":
-			// в метаданных сохранили кусочек текста резюме
 			if txt, ok := meta["text"].(string); ok && txt != "" {
 				docs = append(docs,
 					fmt.Sprintf("Resume excerpt: %s", txt))
@@ -86,7 +104,6 @@ func HandleQuery(ctx context.Context, chatID, query string) (string, error) {
 		}
 	}
 
-	// 5) Формируем промт
 	var b strings.Builder
 	b.WriteString("Use the following documents to answer the question:\n\n")
 	for _, d := range docs {
@@ -95,13 +112,15 @@ func HandleQuery(ctx context.Context, chatID, query string) (string, error) {
 	b.WriteString("Question: " + query)
 	prompt := b.String()
 
-	// 6) Запрашиваем ChatGPT
+	chatStart := time.Now()
 	answer, err := openai.Chat(ctx, prompt)
 	if err != nil {
 		return "", fmt.Errorf("chat completion failed: %w", err)
 	}
+	logger.Infof("chat_ms=%d total_ms=%d",
+		time.Since(chatStart).Milliseconds(),
+		time.Since(start).Milliseconds())
 
-	// 7) Сохраняем историю
 	if err := repositories.SaveQueryWithChat(chatID, query, answer); err != nil {
 		log.Printf("warning: failed to persist query: %v", err)
 	}

@@ -25,6 +25,8 @@ services:
     depends_on:
       - postgres
       - redis
+    networks:
+      - thesis-network
   
   postgres:
     image: postgres:15
@@ -41,6 +43,8 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - thesis-network
 
   redis:
     image: redis:latest
@@ -51,6 +55,8 @@ services:
       - redis-data:/data
     command: redis-server --appendonly yes
     restart: unless-stopped
+    networks:
+      - thesis-network
 
 
 volumes:
@@ -60,6 +66,6 @@ volumes:
     driver: local
 
 networks:
-  default:
+  thesis-network:
     external: true
     name: thesis-network

@@ -1,0 +1,31 @@
+query,gold1_id,gold2_id
+Which cloud‑related certifications do I hold?,scrape:credly:2,scrape:credly:3
+List my AWS certifications.,scrape:credly:2,scrape:credly:3
+When did I obtain the AWS Certified Cloud Practitioner?,scrape:credly:2,
+Summarise my experience building microservices., volodymyr-stishkovskyi:resume:2,
+What project best shows my Go skills?, volodymyr-stishkovskyi:resume:3,
+How many LeetCode problems have I solved in total?,scrape:leetcode,
+Break down my LeetCode solves by difficulty.,scrape:leetcode,
+Which certificate demonstrates containerisation expertise?,scrape:credly:2,
+Describe my work with Kubernetes., volodymyr-stishkovskyi:resume:2,
+What is my strongest soft skill?, volodymyr-stishkovskyi:resume:0,
+Which year did I earn the AWS Certified AI Practitioner Early Adopter?,scrape:credly:4,
+What is my global LeetCode ranking?,scrape:leetcode,
+How do I handle concurrency in Node.js?, volodymyr-stishkovskyi:resume:2,
+Name two cloud platforms I have used., volodymyr-stishkovskyi:resume:1,
+What shows my experience with AWS services?, volodymyr-stishkovskyi:resume:1,volodymyr-stishkovskyi:resume:2
+List certifications earned in 2024.,scrape:credly:0,scrape:credly:1
+Which certification covers cyber‑security fundamentals?,scrape:credly:0,
+Give an overview of my academic background., volodymyr-stishkovskyi:resume:0,
+When did I complete the XYZ microservice project?, volodymyr-stishkovskyi:resume:2,
+State my LeetCode reputation score.,scrape:leetcode,
+How many years have I used Node.js professionally?, volodymyr-stishkovskyi:resume:3,
+What certifications relate to DevOps?,scrape:credly:2,scrape:credly:3
+Which resume section lists cloud architecture work?, volodymyr-stishkovskyi:resume:2,
+Describe my most recent certification.,scrape:credly:3,scrape:credly:4
+What database technologies have I worked with?, volodymyr-stishscrape:credly:3,volodymyr-stishscrape:credly:2
+Where do I mention CI/CD pipelines in my  volodymyr-stishkovskyi:resume?, volodymyr-stishkovskyi:resume:2,
+Which LeetCode difficulty has the most solved problems?,scrape:leetcode,
+What is my favourite programming language?, volodymyr-stishkovskyi:resume:3,
+Summarise my leadership experience., volodymyr-stishkovskyi:resume:0,
+Which certification validates AWS knowledge?,scrape:credly:2,
