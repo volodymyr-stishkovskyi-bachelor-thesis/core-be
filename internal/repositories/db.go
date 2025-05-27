@@ -11,6 +11,10 @@ import (
 
 var DB *pgxpool.Pool
 
+type db interface {
+	ConnectDB() error
+}
+
 func ConnectDB() error {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),

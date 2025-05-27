@@ -1,4 +1,3 @@
-// /internal/service/resume_indexer.go
 package service
 
 import (
@@ -15,13 +14,10 @@ import (
 )
 
 const (
-	// размер чанка в символах
-	chunkSize = 1000
-	// максимально сохраняемая длина текста в метаданных
+	chunkSize      = 1000
 	maxMetaTextLen = 300
 )
 
-// ExtractTextFromPDF открывает PDF и возвращает весь его текст
 func ExtractTextFromPDF(path string) (string, error) {
 	f, r, err := pdf.Open(path)
 	if err != nil {
@@ -41,7 +37,6 @@ func ExtractTextFromPDF(path string) (string, error) {
 	return string(data), nil
 }
 
-// chunkText разбивает строку на куски по chunkSize символов, не разрывая слова
 func chunkText(text string, size int) []string {
 	words := strings.Fields(text)
 	var (
@@ -64,21 +59,17 @@ func chunkText(text string, size int) []string {
 	return chunks
 }
 
-// IndexResumePDF извлекает текст из PDF, делит на чанки, эмбеддит и апсертит в Pinecone
 func IndexResumePDF(ctx context.Context, idPrefix, pdfPath string) error {
-	// 1) Вынимаем текст из PDF
 	text, err := ExtractTextFromPDF(pdfPath)
 	if err != nil {
 		return fmt.Errorf("extract PDF text: %w", err)
 	}
 
-	// 2) Разбиваем на чанки
 	chunks := chunkText(text, chunkSize)
 	if len(chunks) == 0 {
 		return fmt.Errorf("no text chunks generated")
 	}
 
-	// 3) Подготавливаем векторы
 	var vecs []*pinecone.Vector
 	for i, chunk := range chunks {
 		emb, err := openai.GenerateEmbedding(ctx, chunk)
@@ -86,7 +77,6 @@ func IndexResumePDF(ctx context.Context, idPrefix, pdfPath string) error {
 			return fmt.Errorf("embedding chunk %d failed: %w", i, err)
 		}
 
-		// создаём превью для метаданных
 		preview := chunk
 		if len(preview) > maxMetaTextLen {
 			preview = preview[:maxMetaTextLen] + "…"
@@ -106,7 +96,6 @@ func IndexResumePDF(ctx context.Context, idPrefix, pdfPath string) error {
 		})
 	}
 
-	// 4) Отправляем все векторы одним Upsert
 	if err := vector.UpsertVectors(vecs); err != nil {
 		return fmt.Errorf("pinecone upsert failed: %w", err)
 	}

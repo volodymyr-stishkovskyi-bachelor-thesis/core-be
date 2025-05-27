@@ -10,7 +10,6 @@ import (
 )
 
 func LeetCodeHandler(w http.ResponseWriter, r *http.Request) {
-	// 1) Читаем из Redis
 	raw, err := redisclient.Rdb.Get(r.Context(), "scrape:result").Result()
 	if err == redis.Nil {
 		http.Error(w, "LeetCode data not found", http.StatusNotFound)
@@ -21,14 +20,12 @@ func LeetCodeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2) Распаковываем JSON в ScrapeResponse
 	var scraped service.ScrapeResponse
 	if err := json.Unmarshal([]byte(raw), &scraped); err != nil {
 		http.Error(w, "Invalid cached data: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// 3) Собираем числа по сложностям
 	var easy, medium, hard, totalEasy, totalMedium, totalHard int
 	for _, s := range scraped.LeetCode.AcSubmissionNum {
 		switch s.Difficulty {
@@ -51,7 +48,6 @@ func LeetCodeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 4) Фомируем ответ
 	resp := map[string]int{
 		"easy":        easy,
 		"totalEasy":   totalEasy,

@@ -10,13 +10,10 @@ import (
 )
 
 var (
-	// Rdb — глобальный клиент, доступен после первого вызова NewClient()
 	Rdb  *redis.Client
 	once sync.Once
 )
 
-// NewClient возвращает singleton Redis-клиент.
-// Подключение и лог "Connected to Redis" будет выполнено только один раз.
 func NewClient() *redis.Client {
 	once.Do(func() {
 		addr := os.Getenv("REDIS_URL")
@@ -26,7 +23,7 @@ func NewClient() *redis.Client {
 
 		Rdb = redis.NewClient(&redis.Options{
 			Addr:     addr,
-			Password: os.Getenv("REDIS_PASSWORD"), // может быть пустым
+			Password: os.Getenv("REDIS_PASSWORD"),
 			DB:       0,
 		})
 

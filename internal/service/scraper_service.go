@@ -6,6 +6,10 @@ import (
 	grpcclient "github.com/volodymyr-stishkovskyi-bachelor-thesis/core-be/internal/grpc"
 )
 
+type ScraperService interface {
+	ConnectAndScrapeHandler() (ScrapeResponse, error)
+}
+
 type ScrapeResponse struct {
 	Credly   []CredlyResponse `json:"credly"`
 	LeetCode LeetCodeStats    `json:"leetcode"`
@@ -37,13 +41,16 @@ func ConnectAndScrapeHandler() (ScrapeResponse, error) {
 
 	resp, err := grpcclient.Scrape(scraperClient)
 	if err != nil {
-		return ScrapeResponse{}, fmt.Errorf("Failed to scrape: %w", err)
+		return ScrapeResponse{},
+			fmt.Errorf("Failed to scrape: %w", err)
+	}
+	if resp == nil {
+		return ScrapeResponse{},
+			fmt.Errorf("Empty response from Scraper Service")
 	}
 
-	// Convert protobuf response to local struct
 	var result ScrapeResponse
 
-	// Convert Credly responses
 	for _, credlyResp := range resp.Credly {
 		result.Credly = append(result.Credly, CredlyResponse{
 			Title:      credlyResp.Title,
@@ -52,7 +59,10 @@ func ConnectAndScrapeHandler() (ScrapeResponse, error) {
 		})
 	}
 
-	// Convert LeetCode stats
+	if resp.Leetcode == nil {
+		return result, nil
+	}
+
 	var submissions []SubmissionNum
 	for _, sub := range resp.Leetcode.AcSubmissionNum {
 		submissions = append(submissions, SubmissionNum{
